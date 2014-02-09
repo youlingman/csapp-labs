@@ -1,0 +1,59 @@
+
+bufbomb:     file format elf32-i386
+
+
+Disassembly of section .bss:
+
+0804c1c0 <stderr@@GLIBC_2.0>:
+ 804c1c0:	00 00 00 00                                         ....
+
+0804c1c4 <stdin@@GLIBC_2.0>:
+ 804c1c4:	00 00 00 00                                         ....
+
+0804c1c8 <optarg@@GLIBC_2.0>:
+ 804c1c8:	00 00 00 00                                         ....
+
+0804c1cc <completed.5895>:
+ 804c1cc:	00 00 00 00                                         ....
+
+0804c1d0 <dtor_idx.5897>:
+ 804c1d0:	00 00 00 00                                         ....
+
+0804c1d4 <userid>:
+ 804c1d4:	00 00 00 00                                         ....
+
+0804c1d8 <notify>:
+ 804c1d8:	00 00 00 00                                         ....
+
+0804c1dc <autograde>:
+ 804c1dc:	00 00 00 00                                         ....
+
+0804c1e0 <infile>:
+ 804c1e0:	00 00 00 00                                         ....
+
+0804c1e4 <cookie>:
+ 804c1e4:	00 00 00 00                                         ....
+
+0804c1e8 <success>:
+ 804c1e8:	00 00 00 00                                         ....
+
+0804c1ec <global_value>:
+ 804c1ec:	00 00 00 00                                         ....
+
+0804c1f0 <gets_cnt>:
+ 804c1f0:	00 00 00 00                                         ....
+
+0804c1f4 <global_nitro>:
+ 804c1f4:	00 00 00 00                                         ....
+
+0804c1f8 <global_offset>:
+ 804c1f8:	00 00 00 00                                         ....
+
+0804c1fc <global_save_stack>:
+ 804c1fc:	00 00 00 00                                         ....
+
+0804c200 <gets_buf>:
+	...
+
+0804ce04 <stack_top>:
+ 804ce04:	00 00 00 00                                         ....
