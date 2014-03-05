@@ -1,13 +1,12 @@
 /*
- * mm-naive.c - The fastest, least memory-efficient malloc package.
+ * mm-testbook-method.c - Use code from textbook, shrink brk in condition to improve space utilization.
  * 
- * In this naive approach, a block is allocated by simply incrementing
- * the brk pointer.  A block is pure payload. There are no headers or
- * footers.  Blocks are never coalesced or reused. Realloc is
- * implemented directly using mm_malloc and mm_free.
+ * In this approach, code from textbook are using directly.  
+ * A block include header, footer and payload, while header and 
+ * footer both with 4 byte size. Blocks will be coalesced after free.
+ * The heap can be shrink after coalescing free block.
+ * Realloc is implemented directly using mm_malloc and mm_free.
  *
- * NOTE TO STUDENTS: Replace this header comment with your own header
- * comment that gives a high level description of your solution.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -83,7 +82,7 @@ static void checkheap(int verbose);
 static void checkblock(void *bp);
 
 /* 
- * mm_init - initialize the malloc package.
+ * mm_init - initialize the malloc package. Add the epilogue header.
  */
 int mm_init(void)
 {
@@ -98,12 +97,13 @@ int mm_init(void)
 }
 
 /* 
- * mm_malloc - Allocate a block by incrementing the brk pointer.
+ * mm_malloc - Travel through the block chain to find the first fit block to allocate.
+ *     Allocate the block by incrementing the brk pointer if there's no fit block exist.
  *     Always allocate a block whose size is a multiple of the alignment.
  */
 void *mm_malloc(size_t size)
 {
-    // the allocate size is content size add header and footer size
+    // the allocate size is content size plus header and footer size
     size_t newsize = ALIGN(size + DSIZE);
     char *bp = find_fit_block(newsize);
     if(bp != NULL) {
@@ -116,7 +116,7 @@ void *mm_malloc(size_t size)
 }
 
 /*
- * mm_free - Freeing a block does nothing.
+ * mm_free - Freeing a block, coalesce the adjacent free block.
  */
 void mm_free(void *ptr)
 {
@@ -131,14 +131,15 @@ void mm_free(void *ptr)
 }
 
 /*
- *  * coalesce - Boundary tag coalescing. Return ptr to coalesced block
- *   */
-/* $begin mmfree */
+ * coalesce - Boundary tag coalescing, shrink the heap after coalescing if possible.
+ *    Return ptr to coalesced block
+*/
 static void coalesce(void *bp) 
 {
     size_t size = GET_SIZE(HDRP(bp));
     size_t prev_alloc, next_alloc;
 
+	// try the backward coalescing
     while(bp != first_block_brk) {
         prev_alloc = GET_ALLOC(FTRP(PREV_BLKP(bp)));
         if (prev_alloc) break;
@@ -148,6 +149,7 @@ static void coalesce(void *bp)
         bp = PREV_BLKP(bp);
     }
 
+	// try the forward coalescing
     while(GET(HDRP(NEXT_BLKP(bp))) != 0x0) {
         next_alloc = GET_ALLOC(HDRP(NEXT_BLKP(bp)));
         if (next_alloc) break;
@@ -156,7 +158,7 @@ static void coalesce(void *bp)
         PUT(FTRP(bp), PACK(size, 0));
     }
 
-    // shrink the heap
+    // shrink the heap if possible
     if(GET(HDRP(NEXT_BLKP(bp))) == 0x0) {
         // release the last free block
         PUT(HDRP(bp), PACK(0, 0));
@@ -205,7 +207,7 @@ static void *find_fit_block(size_t alloc_size)
 {
     char *bp = first_block_brk;
 
-    // iterate the block chain
+    // travel through the block chain
     for ( bp = first_block_brk; GET(HDRP(bp)) != 0x0; bp = NEXT_BLKP(bp)) {
         if(!GET_ALLOC(HDRP(bp)) && alloc_size <= GET_SIZE(HDRP(bp))) return (void *)bp;
     }
@@ -276,8 +278,8 @@ static void checkblock(void *bp)
 }
 
 /* 
- *  * checkheap - Minimal check of the heap for consistency 
- *   */
+ * checkheap - Minimal check of the heap for consistency 
+*/
 void checkheap(int verbose) 
 {
     char *bp = first_block_brk;
